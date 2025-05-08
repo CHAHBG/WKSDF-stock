@@ -175,7 +175,7 @@ if not st.session_state.authenticated:
     st.stop()
 
 # Titre principal après authentification
-st.title("📦 Wakeu Sokhna Daba Faliou - Gestion de Stock")
+st.title("📦 Wakeur Sokhna Daba Faliou - Gestion de Stock")
 st.sidebar.success(f"👤 Connecté en tant que: {st.session_state.role.upper()}")
 
 # Bouton de déconnexion
