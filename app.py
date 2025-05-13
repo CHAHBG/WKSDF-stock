@@ -336,11 +336,11 @@ elif menu == "📦 Produits":
 
     st.subheader("➕ Ajouter un produit")
     with st.form("add_product_form"):
-        nom = st.text_input("Nom du produit")
-        cat = st.text_input("Catégorie")
-        prix = st.number_input("Prix unitaire", min_value=0)
-        quantite = st.number_input("Quantité", min_value=0)
-        seuil = st.number_input("Seuil d'alerte", min_value=0)
+        nom = st.text_input("Nom du produit", key="add_nom")
+        cat = st.text_input("Catégorie", key="add_cat")
+        prix = st.number_input("Prix unitaire", min_value=0, key="add_prix")
+        quantite = st.number_input("Quantité", min_value=0, key="add_quantite")
+        seuil = st.number_input("Seuil d'alerte", min_value=0, key="add_seuil")
         submitted = st.form_submit_button("Ajouter")
 
         if submitted and nom:
@@ -361,6 +361,35 @@ elif menu == "📦 Produits":
             st.session_state.produits_df = produits_df
             save_data(produits_df, mouvements_df)
             st.success(f"✅ Produit '{nom}' ajouté avec succès.")
+            
+            # Réinitialiser le formulaire après ajout
+            st.session_state["add_nom"] = ""
+            st.session_state["add_cat"] = ""
+            st.session_state["add_prix"] = 0
+            st.session_state["add_quantite"] = 0
+            st.session_state["add_seuil"] = 0
+
+    st.subheader("✏️ Modifier un produit")
+    with st.form("edit_product_form"):
+        produits_df = st.session_state.produits_df
+        produit_to_edit = st.selectbox("Sélectionner un produit à modifier", produits_df["Nom Produit"])
+        nom = st.text_input("Nom du produit", key="edit_nom", value=produit_to_edit)
+        cat = st.text_input("Catégorie", key="edit_cat")
+        prix = st.number_input("Prix unitaire", min_value=0, key="edit_prix")
+        quantite = st.number_input("Quantité", min_value=0, key="edit_quantite")
+        seuil = st.number_input("Seuil d'alerte", min_value=0, key="edit_seuil")
+        submitted = st.form_submit_button("Modifier")
+
+        if submitted and produit_to_edit:
+            idx = produits_df[produits_df["Nom Produit"] == produit_to_edit].index[0]
+            produits_df.at[idx, "Nom Produit"] = nom
+            produits_df.at[idx, "Catégorie"] = cat
+            produits_df.at[idx, "Prix Unitaire"] = prix
+            produits_df.at[idx, "Quantité"] = quantite
+            produits_df.at[idx, "Seuil Alerte"] = seuil
+            st.session_state.produits_df = produits_df
+            save_data(produits_df, st.session_state.mouvements_df)
+            st.success(f"✅ Produit '{produit_to_edit}' modifié avec succès.")
 
 # Onglet Entrée / Sortie
 elif menu == "➕ Entrée / ➖ Sortie":
